@@ -129,6 +129,24 @@ public class RequestTemplateTest {
   }
 
   @Test
+  void acceptsRelativeUriStartingWithHttp() {
+    RequestTemplate template =
+        new RequestTemplate()
+            .method(HttpMethod.GET)
+            .uri("httpbin/get")
+            .target("https://example.com");
+
+    assertThat(template).hasUrl("https://example.com/httpbin/get");
+  }
+
+  @Test
+  void rejectsTargetWithoutScheme() {
+    assertThatExceptionOfType(IllegalArgumentException.class)
+        .isThrownBy(() -> new RequestTemplate().target("httpbin.org"))
+        .withMessage("target values must be absolute.");
+  }
+
+  @Test
   void rejectsAbsoluteUriWithCaseInsensitiveScheme() {
     for (String scheme : Arrays.asList("HTTP", "HTTPS", "hTtP", "hTtPs")) {
       assertThatExceptionOfType(IllegalArgumentException.class)
