@@ -129,6 +129,16 @@ public class RequestTemplateTest {
   }
 
   @Test
+  void contentTypeIsReplacedWhateverItsCase() {
+    RequestTemplate template =
+        new RequestTemplate()
+            .header("Content-Type", "application/json")
+            .header("content-type", "text/plain");
+
+    assertThat(template.headers().get("Content-Type")).containsExactly("text/plain");
+  }
+
+  @Test
   void rejectsAbsoluteUriWithCaseInsensitiveScheme() {
     for (String scheme : Arrays.asList("HTTP", "HTTPS", "hTtP", "hTtPs")) {
       assertThatExceptionOfType(IllegalArgumentException.class)
